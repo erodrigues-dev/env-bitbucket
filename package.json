@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "update:envs": "node src/runners/update-variables.js"
+    "list:environments": "node src/runners/list-environments.js",
+    "update:variables": "node src/runners/update-variables.js"
   },
   "keywords": [],
   "author": "",

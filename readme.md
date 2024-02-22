@@ -17,5 +17,5 @@ BITBUCKET_TOKEN=Bearer token
 ```shell
 npm run list:environments
 
-npm run update:envs {env_uuid} /some/path/.env.staging
+npm run update:variables {env_uuid} /some/path/.env.staging
 ```
