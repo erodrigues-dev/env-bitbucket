@@ -3,7 +3,7 @@
 ## Commands
 
 ```shell
-npx env-bitbucket -t bitbucket_token -w workspace_name -r repository_name
+npx env-bitbucket config -t bitbucket_token -w workspace_name -r repository_name
 
 npx env-bitbucket list:envs
 
