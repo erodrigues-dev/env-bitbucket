@@ -1,18 +1,25 @@
 {
   "name": "env-bitbucket",
-  "version": "0.0.1-beta.0",
-  "description": "",
+  "version": "0.0.1-beta.1",
+  "author": "Elton Rodrigues",
+  "description": "Bitbucket Environment CLI",
   "main": "index.js",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/erodrigues-dev/env-bitbucket"
+  },
   "bin": {
     "env-bitbucket": "src/bin/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "environment",
+    "bitbucket",
+    "env-bitbucket",
+    "cli"
+  ],
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
-    "commander": "^12.0.0",
-    "dotenv": "^16.4.5"
+    "commander": "^12.0.0"
   }
 }
