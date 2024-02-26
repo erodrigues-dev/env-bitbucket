@@ -3,17 +3,12 @@ import readline from 'node:readline';
 
 import { BitbucketApi } from '../remote/BitbucketApi.js';
 
-export class UpdateVariableJob {
-  constructor({ environmentId, envFilePath }) {
-    if (!environmentId) throw new Error('environmentId is required');
-    if (!envFilePath) throw new Error('envFilePath is required');
-
-    this.environmentId = environmentId;
-    this.envFilePath = envFilePath;
-    this.api = new BitbucketApi();
+export class UpdateEnvironmentJob {
+  constructor(config) {
+    this.api = new BitbucketApi(config);
   }
 
-  get ignoredEnvs() {
+  get ignoredVariables() {
     return [
       'NODE_ENV',
       'K8S_CLUSTER_NAME',
@@ -22,44 +17,45 @@ export class UpdateVariableJob {
     ];
   }
 
-  execute() {
+  execute({ id, envFile }) {
     return new Promise((resolve) => {
       const file = readline.createInterface({
-        input: fs.createReadStream(this.envFilePath),
+        input: fs.createReadStream(envFile),
       });
 
-      const toUpdateEnvs = [];
+      const toUpdateVariables = [];
 
       file.on('line', async (line) => {
         if (!this._lineIsValid(line)) return;
-        const env = this._getEnvForLine(line);
-        if (env && !this.ignoredEnvs.includes(env.key)) {
-          toUpdateEnvs.push(env);
+        const env = this._getVariableForLine(line);
+        if (env && !this.ignoredVariables.includes(env.key)) {
+          toUpdateVariables.push(env);
         }
       });
 
       file.on('close', async () => {
-        await this._executeJob(toUpdateEnvs);
+        await this._executeJob(id, toUpdateVariables);
         resolve();
       });
     });
   }
 
-  async _executeJob(toUpdateEnvs) {
-    const { values: bitbucketEnvs } = await this.api.listVariables(
-      this.environmentId
+  async _executeJob(envId, toUpdateVariables) {
+    const { values: bitbucketVariables } = await this.api.listVariables(envId);
+    const toDeleteEnvs = this._getDeletedVariables(
+      bitbucketVariables,
+      toUpdateVariables
     );
-    const toDeleteEnvs = this._getDeletedEnvs(bitbucketEnvs, toUpdateEnvs);
 
-    this._logHeader('Update ENVs');
+    this._logHeader('Update Variables');
 
-    if (toUpdateEnvs.length === 0) {
-      console.log('\nNo ENVs to update\n\n');
+    if (toUpdateVariables.length === 0) {
+      console.log('\nNo variables to update\n\n');
     }
 
-    for (const env of toUpdateEnvs) {
-      console.log(`\n------${env.key}-------`);
-      await this._createOrUpdateEnv(env, bitbucketEnvs);
+    for (const variable of toUpdateVariables) {
+      console.log(`\n------${variable.key}-------`);
+      await this._createOrUpdateVariable(envId, variable, bitbucketVariables);
     }
 
     this._logHeader('Delete ENVs');
@@ -70,30 +66,30 @@ export class UpdateVariableJob {
 
     for (const env of toDeleteEnvs) {
       console.log(`\n------${env.key}-------`);
-      await this._deleteEnv(env);
+      await this._deleteVariable(env);
     }
 
     console.log('\n#################################\n');
   }
 
-  async _createOrUpdateEnv(env, source) {
+  async _createOrUpdateVariable(envId, variable, source) {
     try {
-      console.log(`Processing key: ${env.key}`);
+      console.log(`Processing key: ${variable.key}`);
 
-      const sourceEnv = source.find((x) => x.key === env.key);
+      const sourceVariable = source.find((x) => x.key === variable.key);
 
-      if (!sourceEnv) {
-        const created = await this.api.createVariable(this.environmentId, {
+      if (!sourceVariable) {
+        const created = await this.api.createVariable(envId, {
           type: 'pipeline_variable',
           secured: false,
-          ...env,
+          ...variable,
         });
 
         console.log('Result: created variable', created.uuid);
-      } else if (String(sourceEnv.value) !== String(env.value)) {
-        const updated = await this.api.updateVariable(this.environmentId, {
-          ...sourceEnv,
-          ...env,
+      } else if (String(sourceVariable.value) !== String(variable.value)) {
+        const updated = await this.api.updateVariable(envId, {
+          ...sourceVariable,
+          ...variable,
         });
 
         console.log('Result: updated variable', updated.uuid);
@@ -108,9 +104,9 @@ export class UpdateVariableJob {
     }
   }
 
-  async _deleteEnv(env) {
+  async _deleteVariable(envId, variable) {
     try {
-      await this.api.deleteVariable(this.environmentId, env.uuid);
+      await this.api.deleteVariable(envId, variable.uuid);
       console.log('Result: deleted');
     } catch (error) {
       console.log(
@@ -120,11 +116,12 @@ export class UpdateVariableJob {
     }
   }
 
-  _getDeletedEnvs(source, received) {
+  _getDeletedVariables(source, received) {
     const receivedKeys = received.map((env) => env.key);
     return source.filter(
       (env) =>
-        !receivedKeys.includes(env.key) && !this.ignoredEnvs.includes(env.key)
+        !receivedKeys.includes(env.key) &&
+        !this.ignoredVariables.includes(env.key)
     );
   }
 
@@ -136,7 +133,7 @@ export class UpdateVariableJob {
     );
   }
 
-  _getEnvForLine(line) {
+  _getVariableForLine(line) {
     const [key, value] = line.split('=').map((p) => p.trim());
 
     if (!String(key) || !String(value)) return null;

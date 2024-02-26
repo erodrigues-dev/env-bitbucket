@@ -1,12 +1,11 @@
 import axios from 'axios';
-import process from 'node:process';
 
 export class BitbucketApi {
-  constructor() {
+  constructor(config) {
     this._api = axios.create({
-      baseURL: process.env.BITBUCKET_URL,
+      baseURL: config.url,
       headers: {
-        Authorization: process.env.BITBUCKET_TOKEN,
+        Authorization: `Bearer ${config.token}`,
       },
     });
   }
