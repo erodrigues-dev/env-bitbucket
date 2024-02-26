@@ -1,7 +1,5 @@
 import { BitbucketApi } from '../remote/BitbucketApi.js';
 
-import 'dotenv/config';
-
 export class ListEnvironmentsJob {
   constructor(config) {
     this.api = new BitbucketApi(config);
