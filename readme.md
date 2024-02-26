@@ -1,21 +1,11 @@
-# Update ENVs in Bitbucket pipeline
+# ENV Bitbucket CLI
 
-## config
-
-Crie um arquivo .env na raiz do projeto seguindo o formato
+## Commands
 
 ```shell
-BITBUCKET_URL=https://api.bitbucket.org/2.0/repositories/{workspace}/{repository}
-BITBUCKET_TOKEN=Bearer token
-```
+npx env-bitbucket -t bitbucket_token -w workspace_name -r repository_name
 
-## Atualizando variaveis
+npx env-bitbucket list:envs
 
-- Primeiro liste os environments copie o uuid
-- Depois execute o update informar o id do environment e o path para arquivo de env
-
-```shell
-npm run list:environments
-
-npm run update:variables {env_uuid} /some/path/.env.staging
+npx env-bitbucket update:env --id {12345} --env-file .env.staging
 ```
