@@ -4,6 +4,7 @@ import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js';
 import { SetConfiguration } from '../jobs/SetConfigurations.js';
 import { UpdateEnvironmentJob } from '../jobs/UpdateEnvironment.js';
 import { getConfig } from '../config/config.js';
+import { ListVariablesJob } from '../jobs/ListVariables.js';
 
 program.description(`
   # Bitbucket Environment CLI
@@ -22,7 +23,7 @@ program
   });
 
 program
-  .command('list:envs')
+  .command('env:list')
   .description('List environments')
   .action(async () => {
     console.log('\nList environments wait...\n');
@@ -31,7 +32,16 @@ program
   });
 
 program
-  .command('update:env')
+  .command('env:list:variables <environmentId>')
+  .description('List environment variables')
+  .action(async (environmentId) => {
+    console.log('\nList environment variables wait...\n');
+    const config = await getConfig();
+    await new ListVariablesJob(config).execute(environmentId);
+  });
+
+program
+  .command('env:update')
   .description('Update environment')
   .requiredOption('--id <VALUE>', 'Environment UUID')
   .requiredOption('--env-file <VALUE>', 'Path do env file')
