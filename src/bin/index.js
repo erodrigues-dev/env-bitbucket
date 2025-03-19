@@ -1,5 +1,4 @@
 #! /usr/bin/env node
-import p from '../../package.json' assert { type: 'json' };
 import { program } from 'commander';
 import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js';
 import { SetConfiguration } from '../jobs/SetConfigurations.js';
@@ -17,8 +16,11 @@ program
   .command('version')
   .description('Show cli version')
   .alias('v')
-  .action(() => {
-    console.log(`Version: ${p.version}`);
+  .action(async () => {
+    const {
+      default: { version },
+    } = await import('../../package.json', { with: { type: 'json' } });
+    console.log(`Version: ${version}`);
   });
 
 program
