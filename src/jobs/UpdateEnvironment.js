@@ -64,9 +64,9 @@ export class UpdateEnvironmentJob {
       console.log('\nNo ENVs to delete\n\n');
     }
 
-    for (const env of toDeleteEnvs) {
-      console.log(`\n------${env.key}-------`);
-      await this._deleteVariable(env);
+    for (const variable of toDeleteEnvs) {
+      console.log(`\n------${variable.key}-------`);
+      await this._deleteVariable(envId, variable);
     }
 
     console.log('\n#################################\n');

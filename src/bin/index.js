@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+import p from '../../package.json' assert { type: 'json' };
 import { program } from 'commander';
 import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js';
 import { SetConfiguration } from '../jobs/SetConfigurations.js';
@@ -11,6 +12,14 @@ program.description(`
 
   You need call config before use this cli
 `);
+
+program
+  .command('version')
+  .description('Show cli version')
+  .alias('v')
+  .action(() => {
+    console.log(`Version: ${p.version}`);
+  });
 
 program
   .command('config')

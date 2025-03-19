@@ -9,7 +9,8 @@
     "url": "https://github.com/erodrigues-dev/env-bitbucket"
   },
   "scripts": {
-    "start": "node src/bin/index.js"
+    "start": "node src/bin/index.js",
+    "dev": "node --inspect src/bin/index.js"
   },
   "bin": {
     "env-bitbucket": "src/bin/index.js"
