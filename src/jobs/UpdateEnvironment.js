@@ -69,7 +69,7 @@ export class UpdateEnvironmentJob {
       await this._deleteVariable(envId, variable);
     }
 
-    console.log('\n#################################\n');
+    console.log('\n---------------------------------\n');
   }
 
   async _createOrUpdateVariable(envId, variable, source) {
@@ -129,12 +129,15 @@ export class UpdateEnvironmentJob {
     return (
       Boolean(line.trim()) &&
       !line.startsWith('#') &&
-      line.split('=').length === 2
+      line.split('=').length >= 2
     );
   }
 
   _getVariableForLine(line) {
-    const [key, value] = line.split('=').map((p) => p.trim());
+    const index = line.indexOf('=');
+
+    const key = line.substring(0, index).trim();
+    const value = line.substring(index + 1).trim();
 
     if (!String(key) || !String(value)) return null;
 
@@ -145,12 +148,12 @@ export class UpdateEnvironmentJob {
   }
 
   _logHeader(header) {
-    const pad = '#'.repeat(10);
-    const length = '#'.repeat(header.length);
+    const pad = '-'.repeat(10);
+    const length = '-'.repeat(header.length);
     console.log('\n');
-    console.log(`${pad}#${length}#${pad}`);
+    console.log(`${pad}-${length}-${pad}`);
     console.log(`${pad} ${header} ${pad}`);
-    console.log(`${pad}#${length}#${pad}`);
+    console.log(`${pad}-${length}-${pad}`);
     console.log('\n');
   }
 }
