@@ -1,6 +1,6 @@
 {
   "name": "env-bitbucket",
-  "version": "1.0.0-rc",
+  "version": "1.0.0",
   "author": "Elton Rodrigues",
   "description": "Bitbucket Environment CLI",
   "main": "index.js",
