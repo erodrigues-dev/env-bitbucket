@@ -11,6 +11,7 @@ export class UpdateEnvironmentJob {
   get ignoredVariables() {
     return [
       'NODE_ENV',
+      'K8S_APP_NAME',
       'K8S_CLUSTER_NAME',
       'AWS_ACCESS_KEY_ID',
       'AWS_SECRET_ACCESS_KEY',
