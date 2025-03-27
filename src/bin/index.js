@@ -2,6 +2,7 @@
 import { program } from 'commander'
 import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js'
 import { SetConfiguration } from '../jobs/SetConfigurations.js'
+import { GetConfiguration } from '../jobs/GetConfigurations.js'
 import { UpdateEnvironmentJob } from '../jobs/UpdateEnvironment.js'
 import { getConfig } from '../config/config.js'
 import { ListVariablesJob } from '../jobs/ListVariables.js'
@@ -29,7 +30,13 @@ program
   .option('-w, --workspace <VALUE>', 'Set bitbucket workspace')
   .option('-r, --repository <VALUE>', 'Set bitbucket repository name')
   .option('-t, --token <VALUE>', 'Set bitbucket token')
+  .option('--show [true]', 'Show current configurations')
   .action(async opts => {
+    if (opts.show) {
+      await new GetConfiguration().execute()
+      return
+    }
+
     await new SetConfiguration().execute(opts)
   })
 
