@@ -2,7 +2,6 @@
 
 Cli utility to list and edit environment variables of bitbucket
 
-
 ```shell
 npx env-bitbucket config -t bitbucket_token -w workspace_name -r repository_name
 ```
@@ -13,7 +12,7 @@ npx env-bitbucket config -t bitbucket_token -w workspace_name -r repository_name
 # list all enviroments and display environment Id
 npx env-bitbucket env:list
 
-# list all variables for environment provided 
+# list all variables for environment provided
 npx env-bitbucket env:list:variables <environmentId>
 
 # update all variables based in env file provided
