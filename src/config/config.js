@@ -10,7 +10,7 @@ export const getConfig = async () => {
     const configJson = await fs.readFile(configPath, 'utf8')
     return JSON.parse(configJson)
   } catch (error) {
-    return null
+    return {}
   }
 }
 
@@ -19,7 +19,7 @@ export const setConfig = async config => {
     const content = JSON.stringify(config, null, 2)
     await fs.writeFile(configPath, content, 'utf8')
   } catch (error) {
-    return null
+    return {}
   }
 }
 
@@ -35,6 +35,6 @@ export const updateConfig = async config => {
 
     await setConfig(currentConfig)
   } catch (error) {
-    return null
+    return {}
   }
 }
