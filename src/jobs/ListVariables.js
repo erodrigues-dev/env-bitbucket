@@ -1,12 +1,17 @@
 import { BitbucketApi } from '../remote/BitbucketApi.js'
+import { checkCurrentProject } from './checkCurrentProject.js'
 
 export class ListVariablesJob {
   constructor(config) {
     this.api = new BitbucketApi(config)
   }
 
-  async execute(environmentId) {
+  async execute({ environmentId, ignoreCurrentProject }) {
     try {
+      if (!ignoreCurrentProject) {
+        await checkCurrentProject()
+      }
+
       const { values } = await this.api.listVariables(environmentId)
 
       for (const variable of values) {

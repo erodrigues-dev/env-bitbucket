@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import readline from 'node:readline'
 
 import { BitbucketApi } from '../remote/BitbucketApi.js'
+import { checkCurrentProject } from './checkCurrentProject.js'
 
 export class UpdateEnvironmentJob {
   constructor(config) {
@@ -18,7 +19,11 @@ export class UpdateEnvironmentJob {
     ]
   }
 
-  execute({ id, envFile }) {
+  async execute({ id, envFile, ignoreCurrentProject }) {
+    if (!ignoreCurrentProject) {
+      await checkCurrentProject()
+    }
+
     return new Promise(resolve => {
       const file = readline.createInterface({
         input: fs.createReadStream(envFile),

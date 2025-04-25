@@ -6,6 +6,7 @@ import { GetConfiguration } from '../jobs/GetConfigurations.js'
 import { UpdateEnvironmentJob } from '../jobs/UpdateEnvironment.js'
 import { getConfig } from '../config/config.js'
 import { ListVariablesJob } from '../jobs/ListVariables.js'
+import { useCurrentProject } from '../jobs/useCurrentProject.js'
 
 program.description(`
   # Bitbucket Environment CLI
@@ -41,21 +42,34 @@ program
   })
 
 program
+  .command('use')
+  .description('Set current project name as config repository')
+  .action(async () => await useCurrentProject())
+
+program
   .command('env:list')
   .description('List environments')
-  .action(async () => {
+  .option(
+    '--ignore-current-project [true]',
+    'Ignore current project validation'
+  )
+  .action(async opts => {
     console.log('\nList environments wait...\n')
     const config = await getConfig()
-    await new ListEnvironmentsJob(config).execute()
+    await new ListEnvironmentsJob(config).execute(opts)
   })
 
 program
   .command('env:list:variables <environmentId>')
   .description('List environment variables')
-  .action(async environmentId => {
+  .option(
+    '--ignore-current-project [true]',
+    'Ignore current project validation'
+  )
+  .action(async (environmentId, opts) => {
     console.log('\nList environment variables wait...\n')
     const config = await getConfig()
-    await new ListVariablesJob(config).execute(environmentId)
+    await new ListVariablesJob(config).execute({ environmentId, ...opts })
   })
 
 program
@@ -63,6 +77,10 @@ program
   .description('Update environment')
   .requiredOption('--id <VALUE>', 'Environment UUID')
   .requiredOption('--env-file <VALUE>', 'Path do env file')
+  .option(
+    '--ignore-current-project [true]',
+    'Ignore current project validation'
+  )
   .action(async opts => {
     console.log('\nUpdate Environments wait...\n')
     const config = await getConfig()

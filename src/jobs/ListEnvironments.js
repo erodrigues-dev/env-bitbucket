@@ -1,12 +1,17 @@
 import { BitbucketApi } from '../remote/BitbucketApi.js'
+import { checkCurrentProject } from './checkCurrentProject.js'
 
 export class ListEnvironmentsJob {
   constructor(config) {
     this.api = new BitbucketApi(config)
   }
 
-  async execute() {
+  async execute({ ignoreCurrentProject }) {
     try {
+      if (!ignoreCurrentProject) {
+        await checkCurrentProject()
+      }
+
       const result = await this.api.listEnvironments()
 
       const envs = result.values
