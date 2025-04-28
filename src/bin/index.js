@@ -1,12 +1,13 @@
 #! /usr/bin/env node
 import { program } from 'commander'
-import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js'
-import { SetConfiguration } from '../jobs/SetConfigurations.js'
-import { GetConfiguration } from '../jobs/GetConfigurations.js'
-import { UpdateEnvironmentJob } from '../jobs/UpdateEnvironment.js'
 import { getConfig } from '../config/config.js'
+import { GetConfiguration } from '../jobs/GetConfigurations.js'
+import { ListEnvironmentsJob } from '../jobs/ListEnvironments.js'
 import { ListVariablesJob } from '../jobs/ListVariables.js'
+import { SetConfiguration } from '../jobs/SetConfigurations.js'
+import { UpdateEnvironmentJob } from '../jobs/UpdateEnvironment.js'
 import { useCurrentProject } from '../jobs/useCurrentProject.js'
+import { readInternalPackageJson } from '../utils/readInternalPackageJson.js'
 
 program.description(`
   # Bitbucket Environment CLI
@@ -19,10 +20,8 @@ program
   .description('Show cli version')
   .alias('v')
   .action(async () => {
-    const {
-      default: { version },
-    } = await import('../../package.json', { with: { type: 'json' } })
-    console.log(`Version: ${version}`)
+    const internal = readInternalPackageJson()
+    console.log(`Version: ${internal.version}`)
   })
 
 program
@@ -54,7 +53,6 @@ program
     'Ignore current project validation'
   )
   .action(async opts => {
-    console.log('\nList environments wait...\n')
     const config = await getConfig()
     await new ListEnvironmentsJob(config).execute(opts)
   })
@@ -67,7 +65,6 @@ program
     'Ignore current project validation'
   )
   .action(async (environmentId, opts) => {
-    console.log('\nList environment variables wait...\n')
     const config = await getConfig()
     await new ListVariablesJob(config).execute({ environmentId, ...opts })
   })
@@ -82,7 +79,6 @@ program
     'Ignore current project validation'
   )
   .action(async opts => {
-    console.log('\nUpdate Environments wait...\n')
     const config = await getConfig()
     await new UpdateEnvironmentJob(config).execute(opts)
   })
