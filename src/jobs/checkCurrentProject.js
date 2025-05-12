@@ -1,7 +1,11 @@
 import { getConfig } from '../config/config.js'
 import { readCurrentPackageJson } from '../utils/readCurrentPackageJson.js'
 
-export async function checkCurrentProject(params) {
+export async function checkCurrentProject() {
+  if (Boolean(process.env.EVB_IGNORE_CURRENT_PROJECT)) {
+    return
+  }
+
   const currentPackage = readCurrentPackageJson()
   const config = await getConfig()
 

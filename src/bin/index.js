@@ -12,7 +12,9 @@ import { readInternalPackageJson } from '../utils/readInternalPackageJson.js'
 program.description(`
   # Bitbucket Environment CLI
 
-  You need call config before use this cli
+  Alias: evb
+
+  You need call 'config' before use this cli
 `)
 
 program
@@ -74,6 +76,7 @@ program
   .description('Update environment')
   .requiredOption('--id <VALUE>', 'Environment UUID')
   .requiredOption('--env-file <VALUE>', 'Path do env file')
+  .option('--ignore-bkp [true]', 'Backup current environment')
   .option(
     '--ignore-current-project [true]',
     'Ignore current project validation'
